@@ -9,5 +9,10 @@
     <PackageReference Include="CoreWCF.NetTcp" Version="*" />
     <PackageReference Include="Microsoft.AspNetCore" Version="*" />
     <PackageReference Include="CoreWCF.ConfigurationManager" Version="*" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.IIS" Version="2.2.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.5.1" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>  
 </Project>
