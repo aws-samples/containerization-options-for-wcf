@@ -1,5 +1,6 @@
 ﻿// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
