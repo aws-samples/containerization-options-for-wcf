@@ -205,13 +205,6 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable2
       SubnetId: !Ref PrivateSubnet2
 
-  NoIngressSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: "no-ingress-sg"
-      GroupDescription: "Security group with no ingress rule"
-      VpcId: !Ref VPC
-
   LogsGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -233,6 +226,12 @@ Resources:
           IpProtocol: tcp
           FromPort: 808
           ToPort: 808
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow outbound traffic
+          IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
 
   ContainersSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
@@ -250,6 +249,12 @@ Resources:
           IpProtocol: tcp
           FromPort: 808
           ToPort: 808
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow outbound traffic
+          IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
 
   LoadBalancer:
     DependsOn: VPC
@@ -389,50 +394,6 @@ Resources:
       SchedulingStrategy: REPLICA
       ServiceName: !Sub "fgs-${AWS::StackName}"
       TaskDefinition: !Ref FargateTask
-
-  ECSRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: [ecs.amazonaws.com]
-            Action: ["sts:AssumeRole"]
-      Path: /
-      Policies:
-        - PolicyName: ecs-service
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "ec2:AttachNetworkInterface"
-                  - "ec2:CreateNetworkInterface"
-                  - "ec2:CreateNetworkInterfacePermission"
-                  - "ec2:DeleteNetworkInterface"
-                  - "ec2:DeleteNetworkInterfacePermission"
-                  - "ec2:Describe*"
-                  - "ec2:DetachNetworkInterface"
-                  - "elasticloadbalancing:DeregisterInstancesFromLoadBalancer"
-                  - "elasticloadbalancing:DeregisterTargets"
-                  - "elasticloadbalancing:Describe*"
-                  - "elasticloadbalancing:RegisterInstancesWithLoadBalancer"
-                  - "elasticloadbalancing:RegisterTargets"
-                Resource: "*"
-
-  FargateServiceScalableTarget:
-    Type: AWS::ApplicationAutoScaling::ScalableTarget
-    Properties:
-      MaxCapacity: !Ref MaxCapacity
-      MinCapacity: !Ref MinCapacity
-      ResourceId: !Join
-        - /
-        - - service
-          - !Ref "FargateCluster"
-          - !GetAtt FargateService.Name
-      RoleARN: !GetAtt ECSRole.Arn
-      ScalableDimension: ecs:service:DesiredCount
-      ServiceNamespace: ecs
 
 Outputs:
   LoadBalancerDNS:
