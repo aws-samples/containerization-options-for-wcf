@@ -17,7 +17,11 @@ namespace Client
         {
             Console.WriteLine("Starting ...");
             host = args.Length > 0 ? args[0] : "localhost";
-            Console.WriteLine("Server DNS is: " + host);
+            if (!string.IsNullOrEmpty(host) && host.StartsWith("http://"))
+            {
+                host = host.Replace("http://", "");
+            }
+            Console.WriteLine("Server DNS: " + host);
             
 
             while (true)
@@ -75,7 +79,7 @@ namespace Client
 
         static void AddViaNetTcp(int firstNumber, int secondNumber)
         {
-            var address = string.Format("net.tcp://{0}:808/CalculatorService", host);
+            var address = string.Format("net.tcp://{0}/CalculatorService", host);
             var binding = new NetTcpBinding(SecurityMode.None);
             var factory = new ChannelFactory<ICalculator>(binding, address);
             var channel = factory.CreateChannel();
